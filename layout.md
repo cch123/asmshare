@@ -2,7 +2,13 @@
 
 - 程序的编译阶段
 
-汇编代码在编译的最后阶段生成
+```
+编译 -> 汇编 -> 优化 -> 链接
+```
+
+汇编代码在汇编阶段生成，链接阶段会对生成的汇编代码进行修改。(eg0)
+
+实际上优化过程是在所有过程中都有的，这里我们只说汇编优化。
 
 链接阶段会对汇编结果做调整(如将函数地址从偏移量转换为逻辑地址)
 
@@ -18,15 +24,86 @@ hex 是机器码的 16 进制编码。
 
 - 指令集
 
-RISC/CISC，新架构，如 RISCV。
+RISC/CISC
 
-cpu 优化指令集：SSE/SSE2/AVX。。。AVX512
+intel? 难说。
+
+risc 的新轮子 RISCV。
+
+> https://github.com/riscv
+
+CPU 优化指令集，如 x86 平台：SSE/SSE2/AVX。。。AVX512
+
+> https://github.com/golang/go/wiki/AVX512
 
 - 寄存器
-ah/al
-ax/bx
-eax/ebx
-rax/rbx
+
+寄存器是中央处理器内的组成部分。寄存器是有限存贮容量的高速存贮部件，它们可用来暂存指令、数据和地址。
+
+```
+ah/al => 8 位
+ax/bx => 16 位
+eax/ebx => 32 位
+rax/rbx => 64 位，8 byte
+```
+
+```
+rax : 0x0000000000000000
+```
+
+指令寄存器：pc，表示当前我的代码运行到哪里了。
+
+标志寄存器：eflags，记录各种运算结果的标志位。
+
+- 基础指令
+
+```
+mov rax, 0x1
+add rax, 11
+sub rax,1
+
+push rax => 将 rax 的值存储到栈顶，并将 rsp 上移 8 个字节
+pop rax => 将 rsp 指向的内存位置的 8 个字节移动到 rax，并将 rax 从栈顶下移 8 个字节
+
+jmp addr => 跳转到指定地址
+```
+
+函数调用在汇编上的本质：
+
+```
+jmp 跳进去
+jmp 跳回来
+```
+
+cpu 很傻，跳回来的时候我必须到当前过程的下一条指令位置，难道我还需要在被调用过程里知道调用者的过程下一条指令位置？
+
+```
+call => push pc; jmp
+ret => pop pc; jmp
+```
+
+要点，在栈上记录下一条指令位置，即我们常说的 `return address`。
+
+怎么和系统打交道：
+
+```
+section .data
+message: db 'hello, world!', 10
+
+section .text
+global _start
+
+_start:
+    mov     rax, 1              ; 'write' syscall number
+    mov     rdi, 1              ; stdout descriptor
+    mov     rsi, message        ; string address
+    mov     rdx, 14             ; string length in bytes
+    syscall   ; 重点在这里
+```
+
+更具体的可以参考 [这里](https://github.com/cch123/llp-trans/blob/d6b7f46c72e83ac9145d5534c6bc4e690da8d815/part1/assembly-language/writing-hello-world/basic-instructions.md)
+
+和[这里](http://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/)
 
 ## plan9 汇编
 
