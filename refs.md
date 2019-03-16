@@ -14,3 +14,12 @@ https://quasilyte.dev/blog/post/go-asm-complementary-reference/#external-resourc
 
 https://github.com/teh-cmc/go-internals/tree/master/chapter1_assembly_primer
 
+我在学习汇编的时间总结的笔记：
+
+https://github.com/cch123/golang-notes/blob/master/assembly.md
+
+柴总和我编写的 《Go 高级编程》中的汇编章节：
+
+https://github.com/chai2010/advanced-go-programming-book/blob/master/ch3-asm/readme.md
+
+本书将于 19 年四月由人民邮电出版社出版，到时候希望大家支持！
