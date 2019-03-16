@@ -479,11 +479,76 @@ TEXT main.main(SB) /home/vagrant/a.go
 ```
 
 
-### 查看 built-in 数据结构在传递给函数时的真面目
-
 ### 确定应用层代码被翻译为哪些 runtime 函数
 
 #### 例，查看 defer 的执行过程：
+
+```go
+package main
+
+func f() int {
+	var res = 0
+	defer func() {
+		res++
+	}()
+	return res
+}
+
+func main() {}
+```
+
+```
+"".f STEXT size=137 args=0x8 locals=0x28
+	0x0000 00000 (defer.go:3)	TEXT	"".f(SB), $40-8
+	0x0000 00000 (defer.go:3)	MOVQ	(TLS), CX
+	0x0009 00009 (defer.go:3)	CMPQ	SP, 16(CX)
+	0x000d 00013 (defer.go:3)	JLS	127
+	0x000f 00015 (defer.go:3)	SUBQ	$40, SP
+	0x0013 00019 (defer.go:3)	MOVQ	BP, 32(SP)
+	0x0018 00024 (defer.go:3)	LEAQ	32(SP), BP
+	0x001d 00029 (defer.go:3)	FUNCDATA	$0, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
+	0x001d 00029 (defer.go:3)	FUNCDATA	$1, gclocals·33cdeccccebe80329f1fdbee7f5874cb(SB)
+	0x001d 00029 (defer.go:3)	FUNCDATA	$3, gclocals·9fb7f0986f647f17cb53dda1484e0f7a(SB)
+	0x001d 00029 (defer.go:3)	PCDATA	$2, $0
+	0x001d 00029 (defer.go:3)	PCDATA	$0, $0
+	0x001d 00029 (defer.go:3)	MOVQ	$0, "".~r0+48(SP)
+	0x0026 00038 (defer.go:4)	MOVQ	$0, "".res+24(SP)
+	0x002f 00047 (defer.go:7)	PCDATA	$2, $1
+	0x002f 00047 (defer.go:7)	LEAQ	"".res+24(SP), AX
+	0x0034 00052 (defer.go:7)	PCDATA	$2, $0
+	0x0034 00052 (defer.go:7)	MOVQ	AX, 16(SP)
+	0x0039 00057 (defer.go:5)	MOVL	$8, (SP)
+	0x0040 00064 (defer.go:5)	PCDATA	$2, $1
+	0x0040 00064 (defer.go:5)	LEAQ	"".f.func1·f(SB), AX
+	0x0047 00071 (defer.go:5)	PCDATA	$2, $0
+	0x0047 00071 (defer.go:5)	MOVQ	AX, 8(SP)
+	0x004c 00076 (defer.go:5)	CALL	runtime.deferproc(SB)
+	0x0051 00081 (defer.go:5)	TESTL	AX, AX
+	0x0053 00083 (defer.go:5)	JNE	111
+	0x0055 00085 (defer.go:8)	MOVQ	"".res+24(SP), AX
+	0x005a 00090 (defer.go:8)	MOVQ	AX, "".~r0+48(SP)
+	0x005f 00095 (defer.go:8)	XCHGL	AX, AX
+	0x0060 00096 (defer.go:8)	CALL	runtime.deferreturn(SB)
+	0x0065 00101 (defer.go:8)	MOVQ	32(SP), BP
+	0x006a 00106 (defer.go:8)	ADDQ	$40, SP
+	0x006e 00110 (defer.go:8)	RET
+	0x006f 00111 (defer.go:5)	XCHGL	AX, AX
+	0x0070 00112 (defer.go:5)	CALL	runtime.deferreturn(SB)
+	0x0075 00117 (defer.go:5)	MOVQ	32(SP), BP
+	0x007a 00122 (defer.go:5)	ADDQ	$40, SP
+	0x007e 00126 (defer.go:5)	RET
+	0x007f 00127 (defer.go:5)	NOP
+	0x007f 00127 (defer.go:3)	PCDATA	$0, $-1
+	0x007f 00127 (defer.go:3)	PCDATA	$2, $-1
+	0x007f 00127 (defer.go:3)	CALL	runtime.morestack_noctxt(SB)
+	0x0084 00132 (defer.go:3)	JMP	0
+```
+
+defer 提供给你是用来关闭各种资源，恢复 panic 程序现场的。
+
+不是给你炫技或者面试别人的。
+
+劝君善良。
 
 #### 例，查看 map 被翻译为的 runtime 函数
 
