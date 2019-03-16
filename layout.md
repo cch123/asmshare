@@ -60,9 +60,18 @@ rax : 0x0000000000000000
 - 基础指令
 
 ```
-mov rax, 0x1
-add rax, 11
-sub rax,1
+mov rax, 0x1 // rax = 1
+add rax, 11  // rax = rax + 11
+sub rax,1    // rax = rax - 1
+
+// 在寄存器之间搬数据
+mov rax, rbx // rax = rbx
+
+// 在寄存器和内存之间搬数据
+mov rax, [rbx] // 把 rbx 寄存器的值看作一个地址，把该物理地址的值取出，然后赋值给 rax，即 rax = *rbx
+
+// 在内存之间搬数据
+- 你想多了，不可以的
 
 push rax => 将 rax 的值存储到栈顶，并将 rsp 上移 8 个字节
 pop rax => 将 rsp 指向的内存位置的 8 个字节移动到 rax，并将 rax 从栈顶下移 8 个字节
