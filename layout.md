@@ -188,7 +188,7 @@ mov rax, [rbx] // 把 rbx 寄存器的值看作一个地址，把该物理地址
 - 你想多了，不可以的
 
 push rax => 将 rax 的值存储到栈顶，并将 rsp 上移 8 个字节
-pop rax => 将 rsp 指向的内存位置的 8 个字节移动到 rax，并将 rax 从栈顶下移 8 个字节
+pop rax => 将 rsp 指向的内存位置的 8 个字节移动到 rax，并将 rsp 从栈顶下移 8 个字节
 
 jmp addr => 跳转到指定地址
 ```
